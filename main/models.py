@@ -1,21 +1,67 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
-class Proveedor(models.Model):
-    ruc = models.CharField(max_length=11)
-    razon_social = models.CharField(max_length=20)
-    telefono = models.CharField(max_length=9)
+class Profile(models.Model):
+    # Relacion con el modelo User de Django
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    # Atributos adicionales para el usuario
+    documento_identidad = models.CharField(max_length=8)
+    fecha_nacimiento = models.DateField()
+    estado = models.CharField(max_length=3)
+    ## Opciones de genero
+    MASCULINO = 'MA'
+    FEMENINO = 'FE'
+    NO_BINARIO = 'NB'
+    GENERO_CHOICES = [
+        (MASCULINO, 'Masculino'),
+        (FEMENINO, 'Femenino'),
+        (NO_BINARIO, 'No Binario')
+    ]
+    genero = models.CharField(max_length=2, choices=GENERO_CHOICES)
+
+    def __str__(self):
+        return self.user.get_username()
+
+class Colaborador(models.Model):
+    # Relacion con el modelo Perfil
+    user_profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
+
+    # Atributos especificos del Colaborador
+    reputacion = models.FloatField(null=True, blank=True)
+    cobertura_entrega = models.ManyToManyField(to='Localizacion')
+
+    def __str__(self):
+        return f'Colaborador: {self.user_profile.user.get_username()}'
+
+class Localizacion(models.Model):
+    distrito = models.CharField(max_length=20)
+    provincia = models.CharField(max_length=20)
+    departamento = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.distrito
+
+class Cliente(models.Model):
+    # Relacion con el modelo Perfil
+    user_profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
+
+    # Atributos especificos del Cliente
+    preferencias = models.ManyToManyField(to='Categoria')
+
+    def __str__(self):
+        return f'Cliente: {self.user_profile.user.get_username()}'
+
 
 
 class Categoria(models.Model):
     codigo = models.CharField(max_length=4)
     nombre = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.nombre
 
-class Localizacion(models.Model):
-    distrito = models.CharField(max_length=20)
-    provincia = models.CharField(max_length=20)
-    departamento = models.CharField(max_length=20)
 
 class Producto(models.Model):
     # Relaciones
@@ -29,7 +75,7 @@ class Producto(models.Model):
     estado = models.CharField(max_length=3)
     descuento = models.FloatField(default=0)
 
-    def precio_final(self):
+    def get_precio_final(self):
         return self.precio * (1 - self.descuento)
 
     def sku(self):
@@ -40,6 +86,8 @@ class Producto(models.Model):
 
 class Pedido(models.Model):
     # Relaciones
+    cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
+    repartidor = models.ForeignKey('Colaborador', on_delete=models.SET_NULL, null=True)
     ubicacion = models.ForeignKey('Localizacion', on_delete=models.SET_NULL, null=True)
 
     # Atributos
@@ -49,6 +97,8 @@ class Pedido(models.Model):
     estado = models.CharField(max_length=3)
     tarifa = models.FloatField(blank=True, null=True)
 
+    def __str__(self):
+        return f'{self.cliente} - {self.fecha_creacion} - {self.estado}'
 
     def get_total(self):
         detalles = self.detallepedido_set.all()
@@ -57,6 +107,7 @@ class Pedido(models.Model):
             total += detalle.get_subtotal()
         total += self.tarifa
         return total
+
 class DetallePedido(models.Model):
     # Relaciones
     producto = models.ForeignKey('Producto', on_delete=models.CASCADE)
@@ -70,4 +121,9 @@ class DetallePedido(models.Model):
 
     def get_subtotal(self):
         return self.producto.get_precio_final() * self.cantidad
+
+class Proveedor(models.Model):
+    ruc = models.CharField(max_length=11)
+    razon_social = models.CharField(max_length=20)
+    telefono = models.CharField(max_length=9)
 

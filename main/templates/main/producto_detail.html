@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title> LinioExp </title>
-  </head>
-  <body>
+{% extends "base.html" %}
+
+{% block content %}
     <h1> Linio Exp </h1>
     <hr>
     <h3> {{ object.nombre }} </h3>
@@ -14,6 +10,14 @@
       <li><strong>Categoria:</strong> {{ object.categoria.nombre }}</li>
       <li><strong>Proveedor:</strong> {{ object.proveedor }}</li>
     </ul>
+    <div class="block">
+        <a href="{% url 'add-to-cart' product_pk=object.pk %}" class='button is-primary'>
+          Añadir al carrito
+        </a>
+        <a href="{% url 'pedido-detail' %}" class='button'>
+          Ver carrito
+        </a>
+    </div>
     <hr>
     <ul>
       <li><a href="{% url 'product-list' %}">Ver Lista de Productos</a></li>
@@ -21,3 +25,5 @@
     </ul>
   </body>
 </html>
+
+{% endblock %}
