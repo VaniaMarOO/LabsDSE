@@ -19,7 +19,7 @@ class HomePageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['latest_products'] = Producto.objects.all()[:5]
-
+        context['marcas'] = Marca.objects.all()
         return context
 
 
@@ -27,11 +27,13 @@ class ProductListView(ListView):
     model = Producto
     def get_queryset(self):
         query = self.request.GET.get('q')
+        id_marca = self.request.GET.get('m')
+        object_list = Producto.objects.all()
         if query is not None:
-            object_list = Producto.objects.filter(nombre__icontains=query)
-            return object_list
-        else:
-            return Producto.objects.all()
+            object_list = object_list.filter(nombre__icontains=query)
+        if id_marca is not None:
+            object_list = object_list.filter(marca_id=id_marca)
+        return object_list
 
 class ProductDetailView(DetailView):
     model = Producto

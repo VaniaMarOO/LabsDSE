@@ -1,7 +1,30 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
 
-{% block content %}
-    {% if user.is_authenticated %}
+<head>
+    <!-- Usaremos utf-8 como formato de codificación -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- Título de nuestra página -->
+    <title>Linio Expres - Compras por internet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
+</head>
+
+<body>
+
+  <div class="content">
+    <form action="{% url 'product-list' %}" method="get">
+        <input class="input is-rounded" type="text" name="q" placeholder="Busca tu producto...">
+    </form>
+  </div>
+    <div class="columns">
+    <div class="column">
+    <section class="section">
+    <div class="container">
+      <h1 class="title is-1"> Linio Cervecero </h1>
+      <hr>
+      {% if user.is_authenticated %}
     <h3> Hola {{ user.get_username }} </h3>
     <p>
       <a href="{% url 'logout' %}">Cierra Sesion</a>
@@ -36,8 +59,44 @@
         <li>Aun no hay productos disponibles.</li>
       {% endfor %}
     </ul>
+    <h5> Marcas </h5>
+    <ul>
+      {% for marca in marcas %}
+        <li>
+          <a href="{% url 'product-list' %}?m={{ marca.id }}">
+            {{ marca.nombre }}
+          </a>
+        </li>
+      {% empty %}
+        <li>Aun no hay marcas disponibles.</li>
+      {% endfor %}
+    </ul>
+    <h5> Presentaciones </h5>
+    <ul>
+        <li>
+          <a href="{% url 'product-list' %}?q=botella">
+            Botella
+          </a>
+        </li>
+         <li>
+          <a href="{% url 'product-list' %}?q=lata">
+            Lata
+          </a>
+        </li>
+    </ul>
     <hr>
     <ul>
       <li><a href="{% url 'product-list' %}">Ver Lista de Productos Completa</a></li>
     </ul>
-{% endblock %}
+
+    </div>
+  </section>
+
+    </div>
+    <div class="column">
+    <img src="https://i.ibb.co/3k0NQKV/logo-1.jpg" width="300">
+    </div>
+    </div>
+
+  </body>
+

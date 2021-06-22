@@ -67,6 +67,7 @@ class Producto(models.Model):
     # Relaciones
     categoria = models.ForeignKey('Categoria', on_delete=models.SET_NULL, null=True)
     proveedor = models.ForeignKey('Proveedor', on_delete=models.SET_NULL, null=True)
+    marca = models.ForeignKey('Marca', on_delete=models.SET_NULL, null=True)
 
     # Atributos
     nombre = models.CharField(max_length=20)
@@ -83,6 +84,11 @@ class Producto(models.Model):
         codigo_producto = str(self.id).zfill(6)
 
         return f'{codigo_categoria}-{codigo_producto}'
+
+    def __str__(self):
+        return self.nombre
+class Marca(models.Model):
+    nombre = models.CharField(max_length=20)
 
     def __str__(self):
         return self.nombre

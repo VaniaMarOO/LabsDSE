@@ -34,5 +34,7 @@ admin.site.register(Categoria)
 admin.site.register(Proveedor)
 admin.site.register(Pedido)
 admin.site.register(DetallePedido)
+admin.site.register(Marca)
+
 
 
