@@ -109,6 +109,9 @@ class Pedido(models.Model):
     direccion_entrega = models.CharField(max_length=100, blank=True, null=True)
     estado = models.CharField(max_length=3)
     tarifa = models.FloatField(blank=True, null=True)
+    tipo_comprobante = models.CharField(max_length=20, blank=True, null=True)
+    tipo_documento = models.CharField(max_length=10, blank=True, null=True)
+    num_documento = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
         return f'{self.cliente} - {self.fecha_creacion} - {self.estado}'

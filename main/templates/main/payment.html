@@ -9,7 +9,8 @@
     <div class="block" id="paypal-button-container"></div>
 
     <!--Esto se agrego para testear que pasaria si se completa el pago-->
-    <a href="{% url 'complete-payment' %}">Pago contraentrega</a>
+    <a href="{% url 'complete-payment' %}">Pago contraentrega</a><br>
+     <a href="{% url 'cancelar' %}">Cancelar pago</a>
 
     <!-- Add the checkout buttons, set up the order and approve the order -->
     <script>

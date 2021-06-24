@@ -18,7 +18,7 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['latest_products'] = Producto.objects.all()[:5]
+        context['latest_products'] = Producto.objects.all()[:6]
         context['marcas'] = Marca.objects.all()
         return context
 
@@ -104,6 +104,7 @@ class RegistrationView(FormView):
 
             colaborador.save()
 
+        messages.success(self.request, 'Usuario registrado con éxito. Bienvenido Cervecero 🍺🍻')
         # Login the user
         login(self.request, user)
 
@@ -179,7 +180,7 @@ class PedidoDetailView(DetailView):
 
 class PedidoUpdateView(UpdateView):
     model = Pedido
-    fields = ['ubicacion', 'direccion_entrega']
+    fields = ['ubicacion', 'direccion_entrega', 'tipo_comprobante','tipo_documento', 'num_documento']
     success_url = reverse_lazy('payment')
 
     def form_valid(self, form):
@@ -215,5 +216,9 @@ class CompletePaymentView(View):
         pedido.repartidor = Colaborador.objects.order_by('?').first()
         # Guardamos los cambios
         pedido.save()
-        messages.success(request, 'Gracias por tu compra! Un repartidor ha sido asignado a tu pedido.')
+        messages.success(request, 'Gracias por tu compra! Un repartidor ha sido asignado a tu pedido 🍺🍻')
         return redirect('home')
+
+def cancelar_pago (request):
+    messages.warning(request, 'Tu compra ha sido cancelada 🍺🍻')
+    return redirect('home')
